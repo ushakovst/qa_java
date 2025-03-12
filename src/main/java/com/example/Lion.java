@@ -6,6 +6,13 @@ public class Lion {
 
     boolean hasMane;
 
+    private Feline feline;
+
+    // Инъекция через конструктор
+    public Lion(Feline feline) {
+        this.feline = feline;
+    }
+
     public Lion(String sex) throws Exception {
         if ("Самец".equals(sex)) {
             hasMane = true;
@@ -16,7 +23,6 @@ public class Lion {
         }
     }
 
-    Feline feline = new Feline();
 
     public int getKittens() {
         return feline.getKittens();
