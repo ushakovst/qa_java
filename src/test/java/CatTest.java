@@ -30,13 +30,21 @@ public class CatTest {
     }
 
     //Тест метода getFood
-    @Test //ЯСНЕНЬКО
-    public void testGetFood() throws Exception {
+    @Test
+    public void testGetFoodReturnsCorrectList() throws Exception {
         //настраиваем мок
         when(feline.eatMeat()).thenReturn(List.of("Животные", "Птицы", "Рыба"));
         //проверяем результат
         List<String> expectedFood = List.of("Животные", "Птицы", "Рыба");
         assertEquals(expectedFood, cat.getFood());
+    }
+
+    @Test
+    public void testGetFoodCallsEatOnce() throws Exception {
+        //настройка мока
+        when(feline.eatMeat()).thenReturn(List.of("Животные", "Птицы", "Рыба"));
+        //вызов метода
+        cat.getFood();
         //вызван ли был метод
         verify(feline, times(1)).eatMeat();
     }

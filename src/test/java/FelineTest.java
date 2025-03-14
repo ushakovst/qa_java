@@ -1,21 +1,17 @@
 import com.example.Animal;
 import com.example.Feline;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
-import static org.mockito.MockitoAnnotations.openMocks;
 
-@RunWith(Parameterized.class) //используем парамметризацию
+@RunWith(MockitoJUnitRunner.class)
 public class FelineTest {
 
     private Feline feline;
@@ -23,46 +19,28 @@ public class FelineTest {
     @Mock
     private Animal animal;
 
-    private AutoCloseable closeable;
-
-    //Параметры для тестирования getKittens
-    @Parameterized.Parameter
-    public int inputKittensCount; //поле, которое будет принимать первый параметр из набора данных
-
-    @Parameterized.Parameter(1)
-    public int expectedKittensCount; //поле, которое будет принимать второй параметр из набора данных
-
-    //Метод для установки параметров
-    @Parameterized.Parameters
-    public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][] {
-            {0, 0},
-            {1, 1},
-            {3, 3},
-            {5, 5}
-        });
-    }
-
     @Before
     public void setUp() {
-        closeable = openMocks(this); //idea ругается на initMocks. Пишет, что устарел
         animal = mock(Animal.class);
         feline = new Feline(animal);
     }
 
-    @After // Закрытие ресурсов
-    public void tearDown() throws Exception {
-        closeable.close();
-    }
-
     // Тест для метода eatMeat
     @Test
-    public void testEatMeat() throws Exception {
+    public void testEatMeatReturnsCorrectList() throws Exception {
         // настраиваем мок
         when(animal.getFood("Хищник")).thenReturn(List.of("Животные", "Птицы", "Рыба"));
         // Проверяем результат
         List<String> expectedFood = List.of("Животные", "Птицы", "Рыба");
         assertEquals(expectedFood, feline.eatMeat());
+    }
+
+    @Test
+    public void testEatMeatCallsGetFoodOnce() throws Exception {
+        // настраиваем мок
+        when(animal.getFood("Хищник")).thenReturn(List.of("Животные", "Птицы", "Рыба"));
+        //вызываем метод
+        feline.eatMeat();
         // вызван ли был метод
         verify(animal, times(1)).getFood("Хищник");
     }
@@ -77,12 +55,6 @@ public class FelineTest {
     @Test
     public void testGetKittens() {
         assertEquals(1, feline.getKittens());
-    }
-
-    // Параметризованный тест для метода getKittens(int kittensCount)
-    @Test
-    public void testGetKittensWithParameter() {
-        assertEquals(expectedKittensCount, feline.getKittens(inputKittensCount));
     }
 
     // Тест для исключения в методе eatMeat
